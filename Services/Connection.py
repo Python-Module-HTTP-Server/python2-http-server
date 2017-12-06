@@ -1,4 +1,5 @@
 import sys, socket, thread, time
+
 name = "Service:Connection@{port}:{socket_type}:{transferring_protocol}"
 
 def serviceDetect():
@@ -16,6 +17,7 @@ def serviceDetect():
 			port = 8080
 		else:
 			import random
+			
 			port = random.randint(49152, 65535)
 			random = None
 			del random
@@ -61,7 +63,6 @@ def setupConnection(port, socket_type, transferring_protocol):
 		transferring_protocol = socket.SOCK_STREAM
 	globals().update({'socket_type': socket_type, 'addr': addr, 'transferring_protocol': transferring_protocol})
 
-
 def waitForSocketUnbindAndBindSocketImmidietly():
 	while 1:
 		try:
@@ -70,11 +71,11 @@ def waitForSocketUnbindAndBindSocketImmidietly():
 		except socket.error as X:
 			if X.errno != 98:
 				import os.strerror as errInfo
+				
 				print errInfo(X.errno), X.errno
 				errInfo = None
 				del errInfo
 				raise NotImplementedError("Not implemented error handler")
-
 
 def threadConnection(address, connection):
 	connection.setblocking(True)
@@ -83,9 +84,7 @@ def threadConnection(address, connection):
 	print 'Signal @ {}: {}'.format(address, connection)
 	return_to = connection.recvfrom(65535)
 	#print 'First line: {}'.format(return_to[0])#.splitlines(False)[0])
-	connection.sendto('HTTP/1.1 200 OK\r\n'
-	                  'Content-Type: text/html\r\n'
-	                  '\r\n{}'.format('<html><body>Testing code!<br /> You sended this: <code>{}</code><br /></body></html> Reply unix-time-format: {}'.format(return_to[0], time.time())), address)
+	connection.sendto('HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n{}'.format('<html><body>Testing code!<br />You sended this: <code>{}</code><br /></body></html> Reply unix-time-format: {}'.format(return_to[0], time.time())), address)
 	
 	# TESTING CODE END
 	connection.setblocking(False)
@@ -99,7 +98,6 @@ def getConnction():
 			thread.start_new_thread(threadConnection, (address, connected))
 		except KeyboardInterrupt:
 			break
-	
 
 if __name__ == '__main__':
 	port = socket_type = transferring_protocol = addr = None # for IDE
